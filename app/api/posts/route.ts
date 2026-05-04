@@ -1,7 +1,129 @@
-export async function GET() {
-  return Response.json({ success: true, message: "Not implemented" });
+import { z } from "zod";
+
+import { getAuthUser } from "@/lib/auth";
+import { connectDB } from "@/lib/db";
+import { Post } from "@/models/Post";
+
+export const runtime = "nodejs";
+
+const createPostSchema = z.object({
+  title: z.string().min(1),
+  content: z.string().min(1),
+});
+
+export async function POST(request: Request) {
+  try {
+    let userId: string;
+    try {
+      userId = getAuthUser(request);
+    } catch (error) {
+      return Response.json(
+        {
+          success: false,
+          message: "Unauthorized",
+          details: error instanceof Error ? error.message : "Invalid token",
+        },
+        { status: 401 }
+      );
+    }
+
+    let json: unknown;
+    try {
+      json = await request.json();
+    } catch {
+      return Response.json(
+        {
+          success: false,
+          message: "Invalid JSON body",
+          details: "Send a valid JSON object in the request body.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const result = createPostSchema.safeParse(json);
+    if (!result.success) {
+      return Response.json(
+        {
+          success: false,
+          message: "Validation failed",
+          errors: result.error.flatten(),
+        },
+        { status: 400 }
+      );
+    }
+
+    await connectDB();
+
+    const createdPost = await Post.create({
+      title: result.data.title,
+      content: result.data.content,
+      author: userId,
+    });
+
+    return Response.json({
+      success: true,
+      data: {
+        post: {
+          id: createdPost._id.toString(),
+          title: createdPost.title,
+          content: createdPost.content,
+          author: createdPost.author,
+          createdAt: createdPost.createdAt,
+          updatedAt: createdPost.updatedAt,
+        },
+      },
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        success: false,
+        message: "Create post failed",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }
 
-export async function POST() {
-  return Response.json({ success: true, message: "Not implemented" });
+export async function GET(request: Request) {
+  try {
+    const url = new URL(request.url);
+    const page = Math.max(1, Number.parseInt(url.searchParams.get("page") ?? "1", 10));
+    const limit = Math.max(
+      1,
+      Number.parseInt(url.searchParams.get("limit") ?? "10", 10)
+    );
+
+    await connectDB();
+
+    const total = await Post.countDocuments();
+    const totalPages = Math.ceil(total / limit);
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("author", "name avatar")
+      .lean();
+
+    return Response.json({
+      success: true,
+      data: {
+        posts,
+        page,
+        totalPages,
+      },
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        success: false,
+        message: "Fetch posts failed",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }
