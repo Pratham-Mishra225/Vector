@@ -1,12 +1,8 @@
-type ApiFetchOptions = RequestInit & {
-  baseUrl?: string;
-};
-
-export async function apiFetch(
+export async function apiFetch<T>(
   path: string,
-  options: ApiFetchOptions = {}
-): Promise<Response> {
-  const baseUrl = options.baseUrl ?? process.env.NEXT_PUBLIC_API_URL ?? "";
+  options: RequestInit = {}
+): Promise<T> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
   const url = baseUrl ? `${baseUrl}${path}` : path;
 
   const headers = new Headers(options.headers);
@@ -29,8 +25,13 @@ export async function apiFetch(
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`;
     try {
-      const data = (await response.json()) as { message?: string };
-      if (data?.message) {
+      const data = (await response.json()) as {
+        message?: string;
+        error?: string;
+      };
+      if (data?.error) {
+        message = data.error;
+      } else if (data?.message) {
         message = data.message;
       }
     } catch {
@@ -40,5 +41,9 @@ export async function apiFetch(
     throw new Error(message);
   }
 
-  return response;
+  try {
+    return (await response.json()) as T;
+  } catch {
+    return undefined as T;
+  }
 }

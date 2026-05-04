@@ -1,13 +1,27 @@
 import { create } from "zustand";
 
-import type { User } from "@/types/user";
+import { apiFetch } from "@/lib/apiFetch";
+
+type AuthUser = {
+  _id: string;
+  name: string;
+  email: string;
+  avatar: string;
+};
 
 type AuthState = {
-  user: User | null;
+  user: AuthUser | null;
   token: string | null;
-  login: (user: User, token: string) => void;
+  login: (user: AuthUser, token: string) => void;
   logout: () => void;
-  hydrate: () => void;
+  hydrate: () => Promise<void>;
+};
+
+type CurrentUserResponse = {
+  success: boolean;
+  data: {
+    user: AuthUser;
+  };
 };
 
 const TOKEN_KEY = "auth_token";
@@ -27,12 +41,25 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.removeItem(TOKEN_KEY);
     }
   },
-  hydrate: () => {
+  hydrate: async () => {
     if (typeof window === "undefined") {
       return;
     }
 
     const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      set({ user: null, token: null });
+      return;
+    }
+
     set({ token });
+
+    try {
+      const result = await apiFetch<CurrentUserResponse>("/auth/me");
+      set({ user: result.data.user });
+    } catch {
+      set({ user: null, token: null });
+      localStorage.removeItem(TOKEN_KEY);
+    }
   },
 }));

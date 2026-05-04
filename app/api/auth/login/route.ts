@@ -13,7 +13,10 @@ const loginSchema = z.object({
 });
 
 export async function GET() {
-  return Response.json({ success: false, message: "Use POST to login" });
+  return Response.json(
+    { success: false, error: "Use POST to login" },
+    { status: 405 }
+  );
 }
 
 export async function POST(request: Request) {
@@ -25,8 +28,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Invalid JSON body",
-          details: "Send a valid JSON object in the request body.",
+          error: "Invalid JSON body",
         },
         { status: 400 }
       );
@@ -37,9 +39,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Validation failed",
-          errors: result.error.flatten(),
-          details: "Check the highlighted fields and try again.",
+          error: "Validation failed",
         },
         { status: 400 }
       );
@@ -56,8 +56,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Invalid email or password",
-          details: "Check your email and password and try again.",
+          error: "Invalid email or password",
         },
         { status: 401 }
       );
@@ -68,8 +67,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Invalid email or password",
-          details: "Check your email and password and try again.",
+          error: "Invalid email or password",
         },
         { status: 401 }
       );
@@ -95,8 +93,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Server configuration error",
-          details: "JWT_SECRET is missing on the server.",
+          error: "Server configuration error",
         },
         { status: 500 }
       );
@@ -105,8 +102,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         success: false,
-        message: "Login failed",
-        details: "Unexpected server error. Please try again later.",
+        error: "Login failed",
       },
       { status: 500 }
     );

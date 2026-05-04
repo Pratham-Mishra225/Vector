@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { Like } from "@/models/Like";
 import { Post } from "@/models/Post";
 
 export async function GET(
@@ -18,18 +19,25 @@ export async function GET(
 
     if (!post) {
       return Response.json(
-        { success: false, message: "Post not found" },
+        { success: false, error: "Post not found" },
         { status: 404 }
       );
     }
 
-    return Response.json({ success: true, data: post });
+    const likeCount = await Like.countDocuments({ post: id });
+
+    return Response.json({
+      success: true,
+      data: {
+        post,
+        likeCount,
+      },
+    });
   } catch (error) {
     return Response.json(
       {
         success: false,
-        message: "Fetch post failed",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: "Fetch post failed",
       },
       { status: 500 }
     );
