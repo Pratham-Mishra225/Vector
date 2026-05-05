@@ -215,33 +215,12 @@ npm run format
 Create a `.env.local` file in the project root with the following configuration:
 
 ```env
-# Database Configuration
-DATABASE_URL=sqlite:./blog.db
-# For PostgreSQL: postgres://user:password@localhost:5432/blog_db
-# For MongoDB: mongodb://localhost:27017/blog_db
-
-# Authentication
-AUTH_SECRET=your-secret-key-here-min-32-characters
-NEXTAUTH_URL=http://localhost:3000
-NODE_ENV=development
-
-# Session Configuration
-SESSION_MAX_AGE=2592000  # 30 days in seconds
-SESSION_COOKIE_SECURE=false  # Set to true in production with HTTPS
-
-# API Configuration
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
-
-# Email Configuration (Optional - for future email features)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@example.com
-SMTP_PASSWORD=your-app-password
-
-# Feature Flags (Optional)
-NEXT_PUBLIC_ENABLE_NOTIFICATIONS=true
-NEXT_PUBLIC_ENABLE_SEARCH=true
+MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/blog-platform
+JWT_SECRET=your-secret-key-here-min-32-characters
 ```
+
+API calls use same-origin relative paths such as `/api/posts`, so no public API
+base URL is required for Vercel deployments.
 
 ### Environment Variables by Environment
 

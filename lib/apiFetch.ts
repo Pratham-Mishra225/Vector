@@ -2,8 +2,11 @@ export async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-  const url = baseUrl ? `${baseUrl}${path}` : path;
+  const relativePath = path.startsWith("/") ? path : `/${path}`;
+  const url =
+    relativePath === "/api" || relativePath.startsWith("/api/")
+      ? relativePath
+      : `/api${relativePath}`;
 
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type")) {
