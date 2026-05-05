@@ -1,4 +1,13 @@
 import Link from "next/link";
+import LikeButton from "@/components/LikeButton";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 
 type PostCardProps = {
   id: string;
@@ -26,44 +35,54 @@ export default function PostCard({
     month: "short",
     day: "numeric",
   });
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  const readTime = Math.max(1, Math.ceil(words / 200));
 
   return (
-    <Link
-      className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:scale-[1.01] hover:shadow-md"
-      href={`/post/${id}`}
-    >
-      <div className="flex flex-col gap-4">
-        <div className="space-y-2">
-          <h2 className="text-xl font-semibold text-zinc-900">{title}</h2>
-          <p className="line-clamp-3 text-sm leading-relaxed text-zinc-600">
-            {preview}
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between text-sm text-zinc-500">
+    <Link className="block" href={`/post/${id}`}>
+      <Card className="rounded-lg border border-border bg-card text-card-foreground shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-border/80 hover:shadow-md">
+        <CardHeader className="gap-3 px-6 pt-6">
           <div className="flex items-center gap-3">
             {author.avatar ? (
               <img
-                className="h-8 w-8 rounded-full object-cover"
+                className="h-9 w-9 rounded-full object-cover"
                 src={author.avatar}
                 alt={`${author.name} avatar`}
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900 text-xs font-semibold uppercase text-white">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-xs font-semibold uppercase text-background">
                 {author.name.slice(0, 1)}
               </div>
             )}
-            <div className="flex flex-col">
-              <span className="font-medium text-zinc-700">{author.name}</span>
-              <span className="text-xs text-zinc-500">{formattedDate}</span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-sm font-semibold text-foreground">
+                {author.name}
+              </span>
+              <span className="text-xs text-muted-foreground">{formattedDate}</span>
             </div>
           </div>
 
-          {typeof likeCount === "number" ? (
-            <span className="text-xs text-zinc-500">{likeCount} likes</span>
-          ) : null}
-        </div>
-      </div>
+          <CardTitle className="text-2xl font-semibold leading-tight text-foreground">
+            {title}
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent className="px-6">
+          <CardDescription className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+            {preview}
+          </CardDescription>
+        </CardContent>
+
+        <CardFooter className="justify-between border-t border-border/60 bg-muted/30 px-6">
+          <span className="text-xs text-muted-foreground">{readTime} min read</span>
+          <div
+            onClick={(event) => event.preventDefault()}
+            role="presentation"
+          >
+            <LikeButton postId={id} initialCount={likeCount ?? 0} />
+          </div>
+        </CardFooter>
+      </Card>
     </Link>
   );
 }

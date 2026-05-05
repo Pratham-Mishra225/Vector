@@ -89,7 +89,7 @@ export default function PostDetailPage() {
   if (loading) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-12">
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
+        <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
           Loading post...
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function PostDetailPage() {
   if (notFound || !post) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-12">
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
+        <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
           Post not found.
         </div>
       </div>
@@ -141,10 +141,10 @@ export default function PostDetailPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-12">
       <header className="space-y-6">
-        <h1 className="text-3xl font-bold text-zinc-900">{post.title}</h1>
-        <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500">
+        <h1 className="text-3xl font-bold text-foreground">{post.title}</h1>
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <Link
-            className="flex items-center gap-3 rounded-full border border-gray-200 px-3 py-2 transition hover:border-gray-300"
+            className="flex items-center gap-3 rounded-lg border border-border px-3 py-2 transition hover:border-border/80"
             href={`/profile/${post.author._id}`}
           >
             {post.author.avatar ? (
@@ -154,18 +154,18 @@ export default function PostDetailPage() {
                 alt={`${post.author.name} avatar`}
               />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900 text-xs font-semibold uppercase text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-xs font-semibold uppercase text-background">
                 {post.author.name.slice(0, 1)}
               </div>
             )}
             <div className="flex flex-col">
-              <span className="font-medium text-zinc-800">{post.author.name}</span>
-              <span className="text-xs text-zinc-500">{formattedDate}</span>
+              <span className="font-medium text-foreground">{post.author.name}</span>
+              <span className="text-xs text-muted-foreground">{formattedDate}</span>
             </div>
           </Link>
           {isAuthor ? (
             <button
-              className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-destructive transition hover:border-destructive/40 hover:bg-destructive/20 disabled:cursor-not-allowed disabled:opacity-60"
               type="button"
               onClick={handleDelete}
               disabled={isDeleting}
@@ -177,8 +177,8 @@ export default function PostDetailPage() {
         </div>
       </header>
 
-      <div className="mt-6 border-t border-gray-200 pt-6">
-        <ReactMarkdown className="space-y-5 text-lg leading-[1.8] text-zinc-700">
+      <div className="mt-6 border-t border-border pt-6">
+        <ReactMarkdown className="space-y-5 text-lg leading-[1.8] text-foreground/80">
           {post.content}
         </ReactMarkdown>
       </div>

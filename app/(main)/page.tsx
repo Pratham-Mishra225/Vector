@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 
 import { apiFetch } from "@/lib/apiFetch";
 import PostCard from "@/components/PostCard";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ApiAuthor = {
   _id: string;
@@ -73,32 +76,61 @@ export default function ExplorePage() {
   }, [page]);
 
   return (
-    <div className="container mx-auto px-6 py-10">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="mx-auto w-full max-w-3xl px-6 py-10">
+      <div className="space-y-4 pb-6">
         <div>
-          <h1 className="text-3xl font-semibold text-zinc-900">Explore</h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            Stories from the community.
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Explore
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold leading-tight text-foreground">
+            Stories from the community
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Discover thoughtful writing from creators across the platform.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-zinc-500">
-          Page {page} of {totalPages}
-        </div>
+        <div className="h-px w-full bg-border/70" />
       </div>
 
-      <div className="mt-8 space-y-6">
+      <div className="space-y-6">
         {loading ? (
-          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
-            Loading posts...
-          </div>
+          Array.from({ length: 3 }).map((_, index) => (
+            <Card
+              key={`explore-skeleton-${index}`}
+              className="rounded-lg border border-border/70 bg-card shadow-sm"
+            >
+              <CardContent className="space-y-4 px-6 pt-6">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-3 w-28" />
+                    <Skeleton className="h-3 w-20" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-8 w-20 rounded-full" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
         ) : error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-            {error}
-          </div>
+          <Card className="rounded-lg border border-destructive/30 bg-destructive/10">
+            <CardContent className="px-6 pt-6 text-sm text-destructive">
+              {error}
+            </CardContent>
+          </Card>
         ) : posts.length === 0 ? (
-          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
-            No posts yet. Be the first to share a story.
-          </div>
+          <Card className="rounded-lg border border-border/70 bg-card">
+            <CardContent className="px-6 pt-6 text-sm text-muted-foreground">
+              No posts yet. Be the first to share a story.
+            </CardContent>
+          </Card>
         ) : (
           posts.map((post) => (
             <PostCard
@@ -114,16 +146,20 @@ export default function ExplorePage() {
       </div>
 
       <div className="mt-10 flex items-center justify-between">
-        <button
-          className="rounded-full border border-zinc-900 px-4 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-zinc-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-lg px-4 text-[11px] font-semibold uppercase tracking-[0.18em]"
           type="button"
           disabled={loading || page <= 1}
           onClick={() => setPage((current) => Math.max(1, current - 1))}
         >
           Previous
-        </button>
-        <button
-          className="rounded-full border border-zinc-900 px-4 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-zinc-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-lg px-4 text-[11px] font-semibold uppercase tracking-[0.18em]"
           type="button"
           disabled={loading || page >= totalPages}
           onClick={() =>
@@ -131,7 +167,7 @@ export default function ExplorePage() {
           }
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

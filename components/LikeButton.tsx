@@ -72,10 +72,10 @@ export default function LikeButton({
 
   return (
     <button
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium transition ${
+      className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold tracking-wide transition-colors ${
         liked
-          ? "border-rose-200 bg-rose-50 text-rose-600"
-          : "border-black/10 text-zinc-600 hover:border-black/20"
+          ? "border-destructive/30 bg-destructive/10 text-destructive"
+          : "border-border bg-background text-muted-foreground hover:border-border/80 hover:text-foreground"
       }`}
       type="button"
       aria-pressed={liked}

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -8,6 +7,9 @@ import { apiFetch } from "@/lib/apiFetch";
 import { useAuthStore } from "@/store/authStore";
 import FollowButton from "@/components/FollowButton";
 import PostCard from "@/components/PostCard";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type ApiUser = {
   _id: string;
@@ -146,20 +148,24 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-12">
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
-          Loading profile...
-        </div>
+      <div className="mx-auto w-full max-w-4xl px-6 py-12">
+        <Card className="rounded-lg border border-border bg-card shadow-sm">
+          <CardContent className="pt-4 text-sm text-muted-foreground">
+            Loading profile...
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (notFound || !user) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-12">
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
-          User not found.
-        </div>
+      <div className="mx-auto w-full max-w-4xl px-6 py-12">
+        <Card className="rounded-lg border border-border bg-card shadow-sm">
+          <CardContent className="pt-4 text-sm text-muted-foreground">
+            User not found.
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -216,119 +222,130 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-12">
-      <section className="flex flex-col gap-6 rounded-3xl border border-black/10 bg-white p-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            {user.avatar ? (
-              <img
-                className="h-16 w-16 rounded-full object-cover"
-                src={user.avatar}
-                alt={`${user.name} avatar`}
-              />
-            ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-900 text-lg font-semibold uppercase text-white">
-                {user.name.slice(0, 1)}
+    <div className="mx-auto w-full max-w-4xl px-6 py-12">
+      <Card className="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+        <CardContent className="space-y-6 pt-6">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              {user.avatar ? (
+                <img
+                  className="h-16 w-16 rounded-full object-cover"
+                  src={user.avatar}
+                  alt={`${user.name} avatar`}
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-foreground text-lg font-semibold uppercase text-background">
+                  {user.name.slice(0, 1)}
+                </div>
+              )}
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground">
+                  {user.name}
+                </h1>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {user.bio?.length ? user.bio : "No bio yet"}
+                </p>
+                <p className="text-sm text-muted-foreground">Joined {formattedDate}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-semibold text-zinc-900">
-                {user.name}
-              </h1>
-              <p className="mt-1 text-sm text-zinc-600">
-                {user.bio?.length ? user.bio : "No bio yet"}
-              </p>
-              <p className="text-sm text-zinc-500">Joined {formattedDate}</p>
             </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {isOwnProfile ? (
-              <button
-                className="rounded-full border border-zinc-900 px-4 py-1 text-xs uppercase tracking-[0.2em] transition hover:bg-zinc-900 hover:text-white"
-                type="button"
-                onClick={handleEdit}
-              >
-                Edit Profile
-              </button>
-            ) : (
-              <FollowButton
-                targetUserId={user._id}
-                initialFollowing={initialFollowing}
-              />
-            )}
-          </div>
-        </div>
-
-        {isOwnProfile && isEditing ? (
-          <form className="space-y-4" onSubmit={handleSave}>
-            <label className="block text-sm font-medium text-zinc-700">
-              Bio
-              <textarea
-                className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={4}
-                value={bio}
-                onChange={(event) => setBio(event.target.value)}
-                placeholder="Tell us about yourself"
-              />
-            </label>
-
-            <label className="block text-sm font-medium text-zinc-700">
-              Avatar URL
-              <input
-                className="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="url"
-                value={avatar}
-                onChange={(event) => setAvatar(event.target.value)}
-                placeholder="https://"
-              />
-            </label>
-
-            {formError ? (
-              <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {formError}
-              </p>
-            ) : null}
 
             <div className="flex items-center gap-3">
-              <button
-                className="rounded-full bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-900 disabled:cursor-not-allowed disabled:opacity-60"
-                type="submit"
-                disabled={isSaving}
-              >
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-              <button
-                className="rounded-full border border-gray-300 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:border-gray-400"
-                type="button"
-                onClick={handleCancel}
-                disabled={isSaving}
-              >
-                Cancel
-              </button>
+              {isOwnProfile ? (
+                <button
+                  className="rounded-lg border border-border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
+                  type="button"
+                  onClick={handleEdit}
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                <FollowButton
+                  targetUserId={user._id}
+                  initialFollowing={initialFollowing}
+                />
+              )}
             </div>
-          </form>
-        ) : null}
-      </section>
+          </div>
+
+          {isOwnProfile && isEditing ? (
+            <form className="space-y-4 border-t border-border/70 pt-6" onSubmit={handleSave}>
+              <label className="block text-sm font-medium text-foreground">
+                Bio
+                <Textarea
+                  className="mt-2 min-h-24 text-sm text-foreground"
+                  rows={4}
+                  value={bio}
+                  onChange={(event) => setBio(event.target.value)}
+                  placeholder="Tell us about yourself"
+                />
+              </label>
+
+              <label className="block text-sm font-medium text-foreground">
+                Avatar URL
+                <Input
+                  className="mt-2 h-10 text-sm text-foreground"
+                  type="url"
+                  value={avatar}
+                  onChange={(event) => setAvatar(event.target.value)}
+                  placeholder="https://"
+                />
+              </label>
+
+              {formError ? (
+                <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                  {formError}
+                </p>
+              ) : null}
+
+              <div className="flex items-center gap-3">
+                <button
+                  className="rounded-lg bg-foreground px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-background transition-colors hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
+                  type="submit"
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Saving..." : "Save"}
+                </button>
+                <button
+                  className="rounded-lg border border-border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:border-border/80 hover:text-foreground"
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : null}
+        </CardContent>
+      </Card>
 
       <section className="mt-10 space-y-6">
-        <h2 className="text-lg font-semibold text-zinc-900">Posts</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-foreground">Posts</h2>
+          <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            {posts.length} total
+          </span>
+        </div>
 
         {posts.length === 0 ? (
-          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
-            No posts yet.
-          </div>
+          <Card className="rounded-lg border border-border bg-card shadow-sm">
+            <CardContent className="pt-4 text-sm text-muted-foreground">
+              No posts yet.
+            </CardContent>
+          </Card>
         ) : (
-          posts.map((post) => (
-            <PostCard
-              key={post._id}
-              id={post._id}
-              title={post.title}
-              content={post.content}
-              author={{ name: post.author.name, avatar: post.author.avatar }}
-              createdAt={post.createdAt}
-            />
-          ))
+          <div className="grid gap-6 md:grid-cols-2">
+            {posts.map((post) => (
+              <PostCard
+                key={post._id}
+                id={post._id}
+                title={post.title}
+                content={post.content}
+                author={{ name: post.author.name, avatar: post.author.avatar }}
+                createdAt={post.createdAt}
+              />
+            ))}
+          </div>
         )}
       </section>
     </div>

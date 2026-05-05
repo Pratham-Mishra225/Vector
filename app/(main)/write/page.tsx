@@ -11,7 +11,7 @@ import { useAuthStore } from "@/store/authStore";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
   loading: () => (
-    <div className="rounded-xl border border-black/10 bg-white p-6 text-sm text-zinc-600">
+    <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
       Loading editor...
     </div>
   ),
@@ -77,7 +77,7 @@ export default function WritePage() {
 
   if (!isHydrated) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-12 text-sm text-zinc-600">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12 text-sm text-muted-foreground">
         Checking your session...
       </div>
     );
@@ -85,27 +85,21 @@ export default function WritePage() {
 
   if (!token) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-12 text-sm text-zinc-600">
+      <div className="mx-auto w-full max-w-5xl px-6 py-12 text-sm text-muted-foreground">
         Redirecting to login...
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10">
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div className="flex items-center justify-between">
-          <input
-            className="w-full text-2xl font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
-            type="text"
-            name="title"
-            required
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="Title"
-          />
+    <div className="mx-auto w-full max-w-3xl px-6 py-12">
+      <form className="space-y-10" onSubmit={handleSubmit}>
+        <div className="flex items-center justify-between border-b border-border/70 pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Draft
+          </p>
           <button
-            className="ml-4 shrink-0 rounded-full bg-black px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg bg-foreground px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-background transition-colors hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
             type="submit"
             disabled={isSubmitting}
           >
@@ -113,17 +107,35 @@ export default function WritePage() {
           </button>
         </div>
 
-        <div data-color-mode="light" className="rounded-xl border border-gray-200 bg-white">
+        <input
+          className="w-full text-4xl font-semibold leading-tight tracking-tight text-foreground placeholder:text-muted-foreground focus:outline-none"
+          type="text"
+          name="title"
+          required
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Title"
+        />
+
+        <div data-color-mode="light" className="border-0 bg-transparent">
           <MDEditor
             value={content}
             onChange={(value) => setContent(value ?? "")}
-            height={520}
+            height={600}
             preview="edit"
+            visibleDragbar={false}
+            hideToolbar
+            className="border-0 !shadow-none bg-transparent"
+            textareaProps={{
+              className:
+                "text-lg leading-relaxed text-foreground focus:outline-none",
+              placeholder: "Start writing your story...",
+            }}
           />
         </div>
 
         {error ? (
-          <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         ) : null}

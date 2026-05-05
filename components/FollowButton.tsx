@@ -70,10 +70,10 @@ export default function FollowButton({
 
   return (
     <button
-      className={`rounded-full border px-4 py-1 text-xs uppercase tracking-[0.2em] transition ${
+      className={`rounded-lg border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors ${
         following
-          ? "border-zinc-900 bg-zinc-900 text-white"
-          : "border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white"
+          ? "border-foreground bg-foreground text-background"
+          : "border-border bg-background text-foreground hover:border-foreground hover:bg-foreground hover:text-background"
       }`}
       type="button"
       onClick={handleToggle}
