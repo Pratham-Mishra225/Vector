@@ -80,22 +80,22 @@ The platform is designed with scalability, security, and user experience as core
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Client Browser                        │
-│  (Next.js Frontend + React Components)                   │
+│                    Client Browser                       │
+│  (Next.js Frontend + React Components)                  │
 └────────────────────┬────────────────────────────────────┘
                      │ HTTP/HTTPS
 ┌────────────────────▼────────────────────────────────────┐
-│            Next.js Application Server                    │
+│            Next.js Application Server                   │
 │  ┌──────────────────────────────────────────────────┐   │
-│  │  Pages (SSR/SSG) - App Router                   │   │
+│  │  Pages (SSR/SSG) - App Router                    │   │
 │  │  - (auth): Login, Register                       │   │
 │  │  - (main): Feed, Posts, Profiles, Write          │   │
 │  └──────────────────────────────────────────────────┘   │
 │  ┌──────────────────────────────────────────────────┐   │
 │  │  API Routes (Backend)                            │   │
 │  │  - /api/auth/* (Login, Register, Sessions)       │   │
-│  │  - /api/posts/* (Create, Read, Like, Delete)    │   │
-│  │  - /api/users/* (Profile, Follow/Unfollow)      │   │
+│  │  - /api/posts/* (Create, Read, Like, Delete)     │   │
+│  │  - /api/users/* (Profile, Follow/Unfollow)       │   │
 │  │  - /api/feed/* (Personalized Timeline)           │   │
 │  └──────────────────────────────────────────────────┘   │
 │  ┌──────────────────────────────────────────────────┐   │
@@ -104,7 +104,7 @@ The platform is designed with scalability, security, and user experience as core
 └────────────────────┬────────────────────────────────────┘
                      │ SQL/NoSQL Queries
 ┌────────────────────▼────────────────────────────────────┐
-│                   Database Layer                         │
+│                   Database Layer                        │
 │  - Users (id, email, name, password_hash)               │
 │  - Posts (id, content, author_id, created_at)           │
 │  - Likes (post_id, user_id)                             │
@@ -471,14 +471,6 @@ docker run -p 3000:3000 blog-platform
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## Support & Contact
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/blog-platform/issues)
-- **Email**: support@blogplatform.com
-- **Documentation**: [Full docs](https://docs.blogplatform.com)
 
 ---
 
