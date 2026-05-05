@@ -34,14 +34,20 @@ export function verifyToken(token: string): AuthPayload {
 }
 
 export function getAuthUser(req: Request): string {
-  const header = req.headers.get("authorization");
-  if (!header) {
-    throw new Error("Authorization header missing");
+  const cookieHeader = req.headers.get("cookie");
+  if (!cookieHeader) {
+    throw new Error("No cookies found");
   }
 
-  const [scheme, token] = header.split(" ");
-  if (scheme !== "Bearer" || !token) {
-    throw new Error("Invalid authorization header");
+  const cookies = cookieHeader.split(";").reduce((acc, cookie) => {
+    const [name, value] = cookie.trim().split("=");
+    acc[name] = value;
+    return acc;
+  }, {} as Record<string, string>);
+
+  const token = cookies["token"];
+  if (!token) {
+    throw new Error("Authentication token not found");
   }
 
   const { userId } = verifyToken(token);

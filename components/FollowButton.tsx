@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { apiFetch } from "@/lib/apiFetch";
 import { showToast } from "@/lib/toast";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 type FollowButtonProps = {
   targetUserId: string;
@@ -24,8 +24,7 @@ export default function FollowButton({
   initialFollowing = false,
 }: FollowButtonProps) {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
 
   const [following, setFollowing] = useState(initialFollowing);
   const [isSaving, setIsSaving] = useState(false);
@@ -35,7 +34,7 @@ export default function FollowButton({
   }
 
   const handleToggle = async () => {
-    if (!token) {
+    if (!user) {
       showToast("Log in to follow users.", "error");
       router.push("/login");
       return;

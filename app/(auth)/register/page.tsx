@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { apiFetch } from "@/lib/apiFetch";
 import { showToast } from "@/lib/toast";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 type RegisterResponse = {
   success: boolean;
   data: {
-    token: string;
     user: {
       id: string;
       name: string;
@@ -25,7 +24,7 @@ type RegisterResponse = {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const { refreshAuth } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,16 +43,7 @@ export default function RegisterPage() {
         body: JSON.stringify({ name, email, password }),
       });
 
-      login(
-        {
-          _id: result.data.user.id,
-          name: result.data.user.name,
-          email: result.data.user.email,
-          avatar: result.data.user.avatar,
-        },
-        result.data.token
-      );
-
+      await refreshAuth();
       showToast("Account created!", "success");
       router.push("/");
     } catch (caught) {

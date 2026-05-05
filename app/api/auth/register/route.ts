@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { NextResponse } from "next/server";
 
 import { signToken } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
@@ -76,10 +77,9 @@ export async function POST(request: Request) {
 
     const token = signToken(createdUser._id.toString());
 
-    return Response.json({
+    const response = NextResponse.json({
       success: true,
       data: {
-        token,
         user: {
           id: createdUser._id.toString(),
           name: createdUser.name,
@@ -89,6 +89,16 @@ export async function POST(request: Request) {
         },
       },
     });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+    });
+
+    return response;
   } catch (error) {
     const mongoError = error as { code?: number };
     if (mongoError.code === 11000) {

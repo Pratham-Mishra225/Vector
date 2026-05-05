@@ -6,7 +6,8 @@ import dynamic from "next/dynamic";
 
 import { apiFetch } from "@/lib/apiFetch";
 import { showToast } from "@/lib/toast";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -28,29 +29,12 @@ type CreatePostResponse = {
 
 export default function WritePage() {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
-  const hydrate = useAuthStore((state) => state.hydrate);
+  const { user, loading: authLoading } = useAuth();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    hydrate();
-    setIsHydrated(true);
-  }, [hydrate]);
-
-  useEffect(() => {
-    if (!isHydrated) {
-      return;
-    }
-
-    if (!token) {
-      router.replace("/login");
-    }
-  }, [isHydrated, token, router]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -75,15 +59,11 @@ export default function WritePage() {
     }
   };
 
-  if (!isHydrated) {
-    return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-12 text-sm text-muted-foreground">
-        Checking your session...
-      </div>
-    );
+  if (authLoading) {
+    return <LoadingSpinner />;
   }
 
-  if (!token) {
+  if (!user) {
     return (
       <div className="mx-auto w-full max-w-5xl px-6 py-12 text-sm text-muted-foreground">
         Redirecting to login...

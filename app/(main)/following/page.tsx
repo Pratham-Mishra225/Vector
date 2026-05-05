@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { apiFetch } from "@/lib/apiFetch";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import PostCard from "@/components/PostCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,31 +33,19 @@ type FollowingResponse = {
 
 export default function FollowingPage() {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
-  const hydrate = useAuthStore((state) => state.hydrate);
+  const { user, loading: authLoading } = useAuth();
 
   const [posts, setPosts] = useState<ApiPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    hydrate();
-    setIsHydrated(true);
-  }, [hydrate]);
-
-  useEffect(() => {
-    if (!isHydrated) {
+    if (authLoading) {
       return;
     }
 
-    if (!token) {
+    if (!user) {
       router.replace("/login");
-    }
-  }, [isHydrated, token, router]);
-
-  useEffect(() => {
-    if (!token) {
       return;
     }
 
@@ -96,17 +85,13 @@ export default function FollowingPage() {
     return () => {
       isActive = false;
     };
-  }, [token]);
+  }, [authLoading, user, router]);
 
-  if (!isHydrated) {
-    return (
-      <div className="mx-auto w-full max-w-3xl px-6 py-12 text-sm text-muted-foreground">
-        Checking your session...
-      </div>
-    );
+  if (authLoading) {
+    return <LoadingSpinner />;
   }
 
-  if (!token) {
+  if (!user) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-12 text-sm text-muted-foreground">
         Redirecting to login...

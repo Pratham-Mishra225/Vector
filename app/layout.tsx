@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import AuthHydrator from "@/components/AuthHydrator";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import Toast from "@/components/Toast";
 
@@ -31,11 +31,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-200">
-        <AuthHydrator>
+        <AuthProvider>
           <Navbar />
           <Toast />
           {children}
-        </AuthHydrator>
+        </AuthProvider>
       </body>
     </html>
   );

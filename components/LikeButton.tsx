@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { apiFetch } from "@/lib/apiFetch";
 import { showToast } from "@/lib/toast";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 type LikeButtonProps = {
   postId: string;
@@ -27,14 +27,14 @@ export default function LikeButton({
   initialCount = 0,
 }: LikeButtonProps) {
   const router = useRouter();
-  const token = useAuthStore((state) => state.token);
+  const { user } = useAuth();
 
   const [liked, setLiked] = useState(initialLiked);
   const [count, setCount] = useState(initialCount);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleToggle = async () => {
-    if (!token) {
+    if (!user) {
       showToast("Log in to like posts.", "error");
       router.push("/login");
       return;

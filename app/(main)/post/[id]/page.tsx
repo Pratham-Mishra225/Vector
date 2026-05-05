@@ -8,7 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { apiFetch } from "@/lib/apiFetch";
 import LikeButton from "@/components/LikeButton";
 import { showToast } from "@/lib/toast";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ApiAuthor = {
   _id: string;
@@ -36,7 +36,7 @@ export default function PostDetailPage() {
   const router = useRouter();
   const params = useParams();
   const postId = typeof params.id === "string" ? params.id : params.id?.[0];
-  const currentUser = useAuthStore((state) => state.user);
+  const currentUser = useAuth().user;
 
   const [post, setPost] = useState<ApiPost | null>(null);
   const [likeCount, setLikeCount] = useState(0);

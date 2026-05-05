@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,15 +17,8 @@ import {
 
 export default function Navbar() {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const token = useAuthStore((state) => state.token);
-  const logout = useAuthStore((state) => state.logout);
-  const hydrate = useAuthStore((state) => state.hydrate);
+  const { user, loading, refreshAuth } = useAuth();
   const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
@@ -64,7 +57,7 @@ export default function Navbar() {
     setIsDark(next === "dark");
   };
 
-  const isLoggedIn = Boolean(user && token);
+  const isLoggedIn = Boolean(user) && !loading;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/80 backdrop-blur-xl shadow-[0_1px_0_0_rgba(24,24,27,0.05)] transition-colors duration-200">
@@ -165,7 +158,15 @@ export default function Navbar() {
                       Following
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem variant="destructive" onClick={() => logout()}>
+                    <DropdownMenuItem variant="destructive" onClick={async () => {
+                      try {
+                        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                        await refreshAuth();
+                        router.push('/');
+                      } catch (error) {
+                        console.error('Logout failed:', error);
+                      }
+                    }}>
                       Logout
                     </DropdownMenuItem>
                   </DropdownMenuGroup>

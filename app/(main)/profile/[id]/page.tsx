@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { apiFetch } from "@/lib/apiFetch";
-import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 import FollowButton from "@/components/FollowButton";
 import PostCard from "@/components/PostCard";
 import { Card, CardContent } from "@/components/ui/card";
@@ -55,8 +55,7 @@ export default function ProfilePage() {
   const params = useParams();
   const profileId = typeof params.id === "string" ? params.id : params.id?.[0];
 
-  const authUser = useAuthStore((state) => state.user);
-  const token = useAuthStore((state) => state.token);
+  const authUser = useAuth().user;
 
   const [user, setUser] = useState<ApiUser | null>(null);
   const [posts, setPosts] = useState<ApiPost[]>([]);
@@ -115,7 +114,7 @@ export default function ProfilePage() {
   }, [profileId]);
 
   useEffect(() => {
-    if (!profileId || !token) {
+    if (!profileId) {
       return;
     }
 
@@ -144,7 +143,7 @@ export default function ProfilePage() {
     return () => {
       isActive = false;
     };
-  }, [profileId, token]);
+  }, [profileId]);
 
   if (loading) {
     return (
