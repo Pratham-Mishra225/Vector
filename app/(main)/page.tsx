@@ -73,12 +73,12 @@ export default function ExplorePage() {
   }, [page]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto px-6 py-10">
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-semibold text-zinc-900">Explore</h1>
           <p className="mt-2 text-sm text-zinc-600">
-            The latest stories from the community.
+            Stories from the community.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-zinc-500">

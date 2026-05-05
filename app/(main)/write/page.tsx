@@ -92,40 +92,34 @@ export default function WritePage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold text-zinc-900">Write</h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            Share your thoughts with the community.
-          </p>
-        </div>
-      </div>
-
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <label className="block text-sm font-medium text-zinc-800">
-          Title
+    <div className="mx-auto w-full max-w-3xl px-6 py-10">
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="flex items-center justify-between">
           <input
-            className="mt-2 w-full rounded-md border border-zinc-200 px-3 py-2 text-sm focus:border-zinc-400 focus:outline-none"
+            className="w-full text-2xl font-semibold text-zinc-900 placeholder:text-zinc-400 focus:outline-none"
             type="text"
             name="title"
             required
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            placeholder="Write a punchy title"
+            placeholder="Title"
           />
-        </label>
+          <button
+            className="ml-4 shrink-0 rounded-full bg-black px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-zinc-900 disabled:cursor-not-allowed disabled:opacity-60"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Publishing..." : "Publish"}
+          </button>
+        </div>
 
-        <div className="space-y-2">
-          <span className="text-sm font-medium text-zinc-800">Content</span>
-          <div data-color-mode="light" className="rounded-xl border border-black/10 bg-white">
-            <MDEditor
-              value={content}
-              onChange={(value) => setContent(value ?? "")}
-              height={420}
-              preview="edit"
-            />
-          </div>
+        <div data-color-mode="light" className="rounded-xl border border-gray-200 bg-white">
+          <MDEditor
+            value={content}
+            onChange={(value) => setContent(value ?? "")}
+            height={520}
+            preview="edit"
+          />
         </div>
 
         {error ? (
@@ -133,14 +127,6 @@ export default function WritePage() {
             {error}
           </p>
         ) : null}
-
-        <button
-          className="rounded-full border border-zinc-900 px-6 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-zinc-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Publishing..." : "Publish"}
-        </button>
       </form>
     </div>
   );
