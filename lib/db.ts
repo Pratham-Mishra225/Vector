@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI;
-
-if (!MONGO_URI) {
-  throw new Error("Missing MONGO_URI environment variable");
+function getMongoUri(): string {
+  const mongoUri = process.env.MONGO_URI;
+  if (!mongoUri) {
+    throw new Error("Missing MONGO_URI environment variable");
+  }
+  return mongoUri;
 }
 
 type MongooseCache = {
@@ -29,7 +31,7 @@ export async function connectDB(): Promise<typeof mongoose> {
 
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(MONGO_URI, {
+      .connect(getMongoUri(), {
         serverSelectionTimeoutMS: 5000,
         connectTimeoutMS: 5000,
       })
